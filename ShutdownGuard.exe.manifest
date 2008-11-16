@@ -3,8 +3,9 @@
 <assemblyIdentity
 	version="1.0.0.0"
 	processorArchitecture="X86"
-	name="XP style"
+	name="ShutdownGuard"
 	type="win32" />
+<description>SuperF4</description>
 <dependency>
 	<dependentAssembly>
 		<assemblyIdentity
