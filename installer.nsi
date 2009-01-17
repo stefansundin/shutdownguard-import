@@ -20,7 +20,7 @@
 !include "MUI2.nsh"
 
 Name "${APP_NAME}"
-OutFile "build/${APP_NAME}-${APP_VERSION} (Installer).exe"
+OutFile "build/${APP_NAME}-${APP_VERSION} (Installer) (+Nynorsk).exe"
 InstallDir "$PROGRAMFILES\${APP_NAME}"
 InstallDirRegKey HKCU "Software\${APP_NAME}" "Install_Dir"
 RequestExecutionLevel user
@@ -98,6 +98,7 @@ Section "${APP_NAME} (${APP_VERSION})"
 	IntCmp $LANGUAGE ${LANG_ENGLISH} en-US
 	IntCmp $LANGUAGE ${LANG_SPANISH} es-ES
 	IntCmp $LANGUAGE ${LANG_LITHUANIAN} lt-LT
+	IntCmp $LANGUAGE ${LANG_NORWEGIANNYNORSK} nn-NO
 	en-US:
 		File "build\en-US\${APP_NAME}\*"
 		Goto files_installed
@@ -106,6 +107,9 @@ Section "${APP_NAME} (${APP_VERSION})"
 		Goto files_installed
 	lt-LT:
 		File "build\lt-LT\${APP_NAME}\*"
+		Goto files_installed
+	nn-NO:
+		File "build\nn-NO\${APP_NAME}\*"
 		Goto files_installed
 
 	files_installed:

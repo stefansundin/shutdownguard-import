@@ -23,6 +23,7 @@
 #define APP_VERSION   "0.3"
 #define APP_URL       L"http://shutdownguard.googlecode.com/"
 #define APP_UPDATEURL L"http://shutdownguard.googlecode.com/svn/wiki/latest-stable.txt"
+//#define DEBUG
 
 //Localization
 #ifndef L10N_FILE
@@ -358,13 +359,9 @@ int UpdateTray() {
 	
 	//Only add or modify if not hidden or if balloon will be displayed
 	if (!hide || traydata.uFlags&NIF_INFO) {
-		int tries=0; //If trying to add, try at least five times (required on some slow systems when the program is on autostart since explorer hasn't initialized the tray area)
-		while (Shell_NotifyIcon((tray_added?NIM_MODIFY:NIM_ADD),&traydata) == FALSE) {
-			tries++;
-			if (tray_added || tries >= 5) {
-				Error(L"Shell_NotifyIcon(NIM_ADD/NIM_MODIFY)",L"Failed to update tray icon.",GetLastError(),__LINE__);
-				return 1;
-			}
+		if (Shell_NotifyIcon((tray_added?NIM_MODIFY:NIM_ADD),&traydata) == FALSE) {
+			Error(L"Shell_NotifyIcon(NIM_ADD/NIM_MODIFY)",L"Failed to add tray icon.",GetLastError(),__LINE__);
+			return 1;
 		}
 		
 		//Success
@@ -505,15 +502,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 		}
 		else if (lParam == NIN_BALLOONUSERCLICK) {
+			hide=0;
 			if (!wcscmp(traydata.szInfo,L10N_UPDATE_BALLOON)) {
-				hide=0;
 				SendMessage(hwnd,WM_COMMAND,SWM_UPDATE,0);
 			}
 			else {
 				AskShutdown();
-			}
-			if (hide) {
-				RemoveTray();
 			}
 		}
 	}
