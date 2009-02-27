@@ -1,0 +1,45 @@
+ShutdownGuard
+Programado por Stefan Sundin
+Traducido por Fabrizio Ferri
+
+Evita los apagados y reinicios indeseados de Windows.
+Cuando ShutdownGuard bloquea un intento de apagado aparece un aviso en la barra de tareas preguntando si quieres continuar.
+El clic central en el icono del área de notificación invocará el cuadro de opciones de apagado
+
+ShutdownGuard buscará las actualizaciones automáticamente.
+Puedes desactivarlas editando el fichero ShutdownGuard.ini.
+
+Puedes usar el parámetro -hide para ocultar el icono de notificación.
+
+Visita mi página web en http://shutdownguard.googlecode.com/
+Envía comentarios a recover89@gmail.com
+
+Si consideras que este programa es útil, puedes realizar un donativo.
+En mi web hay más información acerca de cómo realizar un donativo.
+
+Historial de cambios
+--------------------
+Customized version:
+This customized version is made to more prevent tampering with ShutdownGuard by the user.
+Once the tray has been hidden, you must hold the Shift button when attempting shutdown to make the balloon tip show.
+You must also hold the Shift button when launching another copy to add the tray icon.
+You might want to remove this file so your users won't find that out. :)
+Be sure to hide the tray icon on autostart.
+Note that Vista can still be easily shutdown, that is beyond my control.
+There is nothing to prevent the user from terminating ShutdownGuard from other programs like the Task Manager, you must restrict that on your own.
+
+0.4 - not released yet:
+Language can now be changed in ShutdownGuard.ini.
+
+0.3 - 2008-12-25:
+Arreglado un problema de aparición de la nota emergente
+Arreglado el problema del icono de notificación que no reaparecía al reiniciar Explorer
+Añadido comprobador de actualizaciones
+
+0.2 - 2008-11-14:
+Compatible con Vista.
+Se han vuelto a ordenar los botones del cuadro de apagado.
+El clic central sobre el icono invocará el cuadro de apagado.
+
+0.1 - 2008-06-23:
+Primera versión pública.
