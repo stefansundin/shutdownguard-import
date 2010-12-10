@@ -6,60 +6,49 @@
 
 set prefix32=i686-w64-mingw32-
 set prefix64=x86_64-w64-mingw32-
-set l10n=en-US es-ES gl-ES nl-NL nn-NO
 
-taskkill /IM ShutdownGuard.exe
+taskkill /IM ShutdownPatcher.exe
 
 if not exist build. mkdir build
 
 if "%1" == "all" (
-	%prefix32%windres -o build\shutdownguard.o include\shutdownguard.rc
-	%prefix32%gcc -o build\ini.exe include\ini.c -lshlwapi
+	%prefix32%windres -o build\patcher.o include\patcher.rc
 	
 	@echo.
 	echo Building binaries
-	%prefix32%gcc -o "build\ShutdownGuard.exe" shutdownguard.c build\shutdownguard.o -mwindows -lshlwapi -lwininet -O2 -s
-	if not exist "build\ShutdownGuard.exe". exit /b
+	if not exist "build\ShutdownPatcher". mkdir "build\ShutdownPatcher"
+	%prefix32%gcc -o "build\ShutdownPatcher\ShutdownPatcher.exe" patcher.c build\patcher.o -mwindows -lshlwapi -lpsapi -O2 -s
+	if not exist "build\ShutdownPatcher\ShutdownPatcher.exe". exit /b
+	%prefix32%windres -o build\patch.o include\patch.rc
+	%prefix32%gcc -o "build\ShutdownPatcher\patch.dll" patch.c build\patch.o -mdll -O2 -s
+	if not exist "build\ShutdownPatcher\patch.dll". exit /b
+	copy "ShutdownPatcher.ini" "build\ShutdownPatcher"
 	
 	if "%2" == "x64" (
-		if not exist "build\x64". mkdir "build\x64"
-		%prefix64%windres -o build\x64\shutdownguard.o include\shutdownguard.rc
-		%prefix64%gcc -o "build\x64\ShutdownGuard.exe" shutdownguard.c build\x64\shutdownguard.o -mwindows -lshlwapi -lwininet -O2 -s
-		if not exist "build\x64\ShutdownGuard.exe". exit /b
-	)
-	
-	for %%f in (%l10n%) do (
-		@echo.
-		echo Putting together %%f
-		if not exist "build\%%f\ShutdownGuard". mkdir "build\%%f\ShutdownGuard"
-		copy "build\ShutdownGuard.exe" "build\%%f\ShutdownGuard"
-		copy "localization\%%f\info.txt" "build\%%f\ShutdownGuard"
-		copy "ShutdownGuard.ini" "build\%%f\ShutdownGuard"
-		"build\ini.exe" "build\%%f\ShutdownGuard\ShutdownGuard.ini" ShutdownGuard Language %%f
-		if "%2" == "x64" (
-			if not exist "build\x64\%%f\ShutdownGuard". mkdir "build\x64\%%f\ShutdownGuard"
-			copy "build\x64\ShutdownGuard.exe" "build\x64\%%f\ShutdownGuard"
-			copy "build\%%f\ShutdownGuard\info.txt" "build\x64\%%f\ShutdownGuard"
-			copy "build\%%f\ShutdownGuard\ShutdownGuard.ini" "build\x64\%%f\ShutdownGuard"
-		)
-	)
-	
-	@echo.
-	echo Building installer
-	if "%2" == "x64" (
-		makensis /V2 /Dx64 installer.nsi
-	) else (
-		makensis /V2 installer.nsi
+		if not exist "build\x64\ShutdownPatcher". mkdir "build\x64\ShutdownPatcher"
+		%prefix64%windres -o build\x64\patcher.o include\patcher.rc
+		%prefix64%gcc -o "build\x64\ShutdownPatcher\ShutdownPatcher.exe" patcher.c build\x64\patcher.o -mwindows -lshlwapi -lpsapi -O2 -s
+		if not exist "build\x64\ShutdownPatcher\ShutdownPatcher.exe". exit /b
+		%prefix64%windres -o build\x64\patch_x64.o include\patch.rc
+		%prefix64%gcc -o "build\x64\ShutdownPatcher\patch_x64.dll" patch.c build\x64\patch_x64.o -mdll -O2 -s
+		if not exist "build\x64\ShutdownPatcher\patch_x64.dll". exit /b
+		copy "ShutdownPatcher.ini" "build\x64\ShutdownPatcher"
+		
+		copy "build\ShutdownPatcher\patch.dll" "build\x64\ShutdownPatcher"
 	)
 ) else if "%1" == "x64" (
 	if not exist "build\x64". mkdir "build\x64"
-	%prefix64%windres -o build\x64\shutdownguard.o include\shutdownguard.rc
-	%prefix64%gcc -o ShutdownGuard.exe shutdownguard.c build\x64\shutdownguard.o -mwindows -lshlwapi -lwininet -g -DDEBUG
+	%prefix64%windres -o build\x64\patcher.o include\patcher.rc
+	%prefix64%gcc -o ShutdownPatcher.exe patcher.c build\x64\patcher.o -mwindows -lshlwapi -lpsapi -g -DDEBUG
+	%prefix32%windres -o build\patch_x64.o include\patch.rc
+	%prefix32%gcc -o patch_x64.dll patch.c build\patch_x64.o -mdll -g -DDEBUG
 ) else (
-	%prefix32%windres -o build\shutdownguard.o include\shutdownguard.rc
-	%prefix32%gcc -o ShutdownGuard.exe shutdownguard.c build\shutdownguard.o -mwindows -lshlwapi -lwininet -g -DDEBUG
+	%prefix32%windres -o build\patcher.o include\patcher.rc
+	%prefix32%gcc -o ShutdownPatcher.exe patcher.c build\patcher.o -mwindows -lshlwapi -lpsapi -g -DDEBUG
+	%prefix32%windres -o build\patch.o include\patch.rc
+	%prefix32%gcc -o patch.dll patch.c build\patch.o -mdll -g -DDEBUG
 	
 	if "%1" == "run" (
-		start ShutdownGuard.exe
+		start ShutdownPatcher.exe
 	)
 )
